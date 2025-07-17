@@ -19,7 +19,7 @@ function renderLaptops(list) {
     card.className = 'laptop-card fade-in'
     card.innerHTML = `
       <div class="laptop-image">
-        <img src="https://via.placeholder.com/300x200?text=${laptop.brand}+${laptop.model}" alt="${laptop.brand} ${laptop.model}" loading="lazy">
+        <img src=${laptop.imgurl} alt="${laptop.brand} ${laptop.model}" loading="lazy">
       </div>
       <div class="laptop-info">
         <h3>${laptop.brand} <span>${laptop.model}</span></h3>

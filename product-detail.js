@@ -26,7 +26,7 @@ function fetchLaptopDetails(id) {
 }
 
 function renderLaptopDetails() {
-  document.getElementById('product-image').innerHTML = `<img src="https://via.placeholder.com/300x200?text=${laptop.brand}+${laptop.model}" alt="${laptop.brand} ${laptop.model}">`
+  document.getElementById('product-image').innerHTML = `<img src=${laptop.imgurl} alt="${laptop.brand} ${laptop.model}">`
   document.getElementById('product-title').textContent = `${laptop.brand} ${laptop.model}`
   document.getElementById('product-specs').innerHTML = `
     <p><strong>Processor:</strong> ${laptop.processor}</p>
@@ -106,7 +106,8 @@ document.addEventListener('DOMContentLoaded', () => {
       brand: laptop.brand,
       model: laptop.model,
       price: laptop.price,
-      imageUrl: `https://via.placeholder.com/300x200?text=${laptop.brand}+${laptop.model}`
+      // imageUrl: `https://via.placeholder.com/300x200?text=${laptop.brand}+${laptop.model}`,
+      imgurl:laptop.imgurl
     }))
     localStorage.setItem('loanSelection', JSON.stringify({
       loanAmount,

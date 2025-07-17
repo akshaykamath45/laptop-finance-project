@@ -24,7 +24,7 @@ function renderConfirmation() {
     <div class="confirmation-section confirmation-laptop">
       <h3>Laptop Details</h3>
       <div class="confirmation-laptop-card">
-        <img src="${laptop.imageUrl || 'https://via.placeholder.com/120x80?text=Laptop'}" alt="${laptop.brand} ${laptop.model}" class="confirmation-laptop-img">
+        <img src="${laptop.imgurl || 'https://via.placeholder.com/120x80?text=Laptop'}" alt="${laptop.brand} ${laptop.model}" class="confirmation-laptop-img">
         <div class="confirmation-laptop-info">
           <div><strong>Brand:</strong> ${laptop.brand}</div>
           <div><strong>Model:</strong> ${laptop.model}</div>
