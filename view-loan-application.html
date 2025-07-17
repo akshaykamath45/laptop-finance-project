@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Loan Application Details - Admin Panel</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-logo">
+        <i class="fas fa-laptop"></i>
+        <span>LaptopFinance</span>
+      </div>
+      <div class="nav-controls">
+        <button class="theme-toggle" id="theme-toggle">
+          <i class="fas fa-moon" id="theme-icon"></i>
+        </button>
+      </div>
+    </div>
+  </nav>
+  <main class="dashboard-main">
+    <div class="dashboard-container">
+      <aside class="dashboard-sidebar">
+        <div class="sidebar-header">
+          <h3>Admin Panel</h3>
+        </div>
+        <nav class="sidebar-nav">
+          <a href="dashboard.html#all-loans" class="sidebar-link">
+            <i class="fas fa-arrow-left"></i>
+            <span>Back to Dashboard</span>
+          </a>
+        </nav>
+      </aside>
+      <div class="dashboard-content">
+        <div class="dashboard-section active">
+          <h2>Loan Application Details</h2>
+          <div class="dashboard-table-container">
+            <div id="loan-details" class="detail-card"></div>
+          </div>
+          <h3>EMI Schedule</h3>
+          <div class="dashboard-table-container">
+            <div id="emi-details" class="dashboard-table"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script src="view-loan-application.js"></script>
+</body>
+</html>

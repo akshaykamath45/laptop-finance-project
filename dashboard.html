@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - LaptopFinance</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-logo">
+        <i class="fas fa-laptop"></i>
+        <span>LaptopFinance</span>
+      </div>
+      <div class="nav-menu" id="nav-menu"></div>
+      <div class="nav-controls">
+        <button class="theme-toggle" id="theme-toggle">
+          <i class="fas fa-moon" id="theme-icon"></i>
+        </button>
+        <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+  <main class="dashboard-main">
+    <div class="dashboard-container">
+      <aside class="dashboard-sidebar">
+        <div class="sidebar-header">
+          <h3>Admin Panel</h3>
+        </div>
+        <nav class="sidebar-nav">
+          <a href="#all-loans" class="sidebar-link active" data-section="all-loans">
+            <i class="fas fa-file-invoice-dollar"></i>
+            <span>All Loans</span>
+          </a>
+          <a href="#customers" class="sidebar-link" data-section="customers">
+            <i class="fas fa-users"></i>
+            <span>Customers</span>
+          </a>
+          <a href="#analytics" class="sidebar-link" data-section="analytics">
+            <i class="fas fa-chart-line"></i>
+            <span>Analytics</span>
+          </a>
+          <a href="#settings" class="sidebar-link" data-section="settings">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+          </a>
+        </nav>
+      </aside>
+      <div class="dashboard-content">
+        <div id="all-loans" class="dashboard-section active">
+          <h2>All Loan Applications</h2>
+          <div class="dashboard-stats">
+            <div class="stat-card">
+              <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+              <div class="stat-info">
+                <h3>Approved</h3>
+                <p class="stat-number" id="approved-count">0</p>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon"><i class="fas fa-clock"></i></div>
+              <div class="stat-info">
+                <h3>Pending</h3>
+                <p class="stat-number" id="pending-count">0</p>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon"><i class="fas fa-times-circle"></i></div>
+              <div class="stat-info">
+                <h3>Rejected</h3>
+                <p class="stat-number" id="rejected-count">0</p>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon"><i class="fas fa-indian-rupee-sign"></i></div>
+              <div class="stat-info">
+                <h3>Total Value</h3>
+                <p class="stat-number" id="total-value">₹0</p>
+              </div>
+            </div>
+          </div>
+          <div class="dashboard-table-container">
+            <div class="table-header">
+              <h3>Recent Applications</h3>
+              <button class="btn btn-primary" onclick="window.location.href='all-applications.html'">View All</button>
+            </div>
+            <div id="recent-applications" class="dashboard-table">
+              <!-- Table content will be loaded by JS -->
+            </div>
+          </div>
+        </div>
+        <div id="customers" class="dashboard-section">
+          <h2>Customer Management</h2>
+          <div class="dashboard-stats">
+            <div class="stat-card">
+              <div class="stat-icon"><i class="fas fa-user-plus"></i></div>
+              <div class="stat-info">
+                <h3>Total Customers</h3>
+                <p class="stat-number" id="total-customers">0</p>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon"><i class="fas fa-user-check"></i></div>
+              <div class="stat-info">
+                <h3>Active Customers</h3>
+                <p class="stat-number" id="active-customers">0</p>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon"><i class="fas fa-star"></i></div>
+              <div class="stat-info">
+                <h3>Premium Customers</h3>
+                <p class="stat-number" id="premium-customers">0</p>
+              </div>
+            </div>
+          </div>
+          <div class="dashboard-table-container">
+            <div class="table-header">
+              <h3>Customer List</h3>
+            </div>
+            <div id="customer-list" class="dashboard-table">
+              <!-- Customer table will be loaded by JS -->
+            </div>
+          </div>
+        </div>
+        <div id="analytics" class="dashboard-section">
+          <h2>Analytics & Reports</h2>
+          <div class="analytics-grid">
+            <div class="analytics-card">
+              <h3>Monthly Applications</h3>
+              <div class="chart-placeholder">
+                <i class="fas fa-chart-bar"></i>
+                <p>Chart visualization would go here</p>
+              </div>
+            </div>
+            <div class="analytics-card">
+              <h3>Revenue Trends</h3>
+              <div class="chart-placeholder">
+                <i class="fas fa-chart-line"></i>
+                <p>Revenue chart would go here</p>
+              </div>
+            </div>
+            <div class="analytics-card">
+              <h3>Top Laptop Models</h3>
+              <div class="chart-placeholder">
+                <i class="fas fa-laptop"></i>
+                <p>Popular models chart would go here</p>
+              </div>
+            </div>
+            <div class="analytics-card">
+              <h3>Approval Rate</h3>
+              <div class="chart-placeholder">
+                <i class="fas fa-percentage"></i>
+                <p>Approval rate visualization would go here</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="settings" class="dashboard-section">
+          <h2>Admin Settings</h2>
+          <div class="settings-grid">
+            <div class="settings-card">
+              <h3>System Configuration</h3>
+              <div class="setting-item">
+                <label>Interest Rate (%)</label>
+                <input type="number" value="12" min="0" max="30" step="0.1">
+              </div>
+              <div class="setting-item">
+                <label>Minimum Loan Amount (₹)</label>
+                <input type="number" value="5000" min="1000" step="1000">
+              </div>
+              <div class="setting-item">
+                <label>Maximum Loan Amount (₹)</label>
+                <input type="number" value="500000" min="10000" step="10000">
+              </div>
+              <button class="btn btn-primary">Save Changes</button>
+            </div>
+            <div class="settings-card">
+              <h3>User Management</h3>
+              <div class="setting-item">
+                <label>Auto-approval threshold (₹)</label>
+                <input type="number" value="50000" min="10000" step="10000">
+              </div>
+              <div class="setting-item">
+                <label>Maximum EMI tenure (months)</label>
+                <input type="number" value="24" min="3" max="60" step="3">
+              </div>
+              <button class="btn btn-primary">Update Settings</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script src="script.js"></script>
+  <script>document.addEventListener('DOMContentLoaded', function() { renderNavbar(); });</script>
+  <script src="dashboard.js"></script>
+</body>
+</html> 

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laptop Details - LaptopFinance</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-laptop"></i>
+                <span>LaptopFinance</span>
+            </div>
+            <div class="nav-menu" id="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="products.html" class="nav-link">Explore Laptops</a>
+                <a href="#" class="nav-link">Login</a>
+                <a href="#" class="nav-link">Sign Up</a>
+            </div>
+            <div class="nav-controls">
+                <button class="theme-toggle" id="theme-toggle">
+                    <i class="fas fa-moon" id="theme-icon"></i>
+                </button>
+                <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+    <!-- Laptop Detail Section -->
+    <section class="product-detail-section" id="product-detail-section">
+        <div class="container product-detail-container">
+            <div class="product-image" id="product-image"></div>
+            <div class="product-info">
+                <h1 id="product-title"></h1>
+                <div class="product-specs" id="product-specs"></div>
+                <div class="product-price" id="product-price"></div>
+                <button class="btn btn-primary" id="buy-finance-btn"><i class="fas fa-coins"></i> Buy with Finance</button>
+            </div>
+        </div>
+    </section>
+    <!-- EMI Calculator Section -->
+    <section class="emi-section" id="emi-section">
+        <div class="container emi-container">
+            <h2><i class="fas fa-calculator"></i> EMI Calculator</h2>
+            <form class="emi-form" id="emi-form">
+                <div class="emi-form-group">
+                    <label for="loan-amount">Loan Amount (₹)</label>
+                    <input type="number" id="loan-amount" min="1000" required>
+                </div>
+                <div class="emi-form-group">
+                    <label for="down-payment">Down Payment (₹)</label>
+                    <input type="number" id="down-payment" min="0" value="0">
+                </div>
+                <div class="emi-form-group">
+                    <label for="tenure">Tenure (Months)</label>
+                    <select id="tenure">
+                        <option value="6">6</option>
+                        <option value="12">12</option>
+                        <option value="18">18</option>
+                        <option value="24">24</option>
+                    </select>
+                </div>
+                <div class="emi-form-group">
+                    <label for="interest-rate">Interest Rate (%)</label>
+                    <input type="number" id="interest-rate" value="12" min="1" max="30" step="0.1" readonly>
+                </div>
+            </form>
+            <div class="emi-summary-card" id="emi-summary-card">
+                <!-- EMI summary will be rendered here -->
+            </div>
+            <button class="btn btn-primary" id="proceed-apply-btn">Proceed to Apply</button>
+            <!-- EMI breakdown table hidden for now -->
+            <!-- <div class="emi-breakdown-table" id="emi-breakdown-table">
+                <!-- EMI breakdown table will be rendered here -->
+            <!-- </div> -->
+        </div>
+    </section>
+    <script src="script.js"></script>
+    <script src="products.js"></script>
+    <script src="product-detail.js"></script>
+</body>
+</html> 
