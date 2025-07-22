@@ -40,10 +40,11 @@ function renderEligibilityResult() {
   const minIncome = loan.loanAmount ? loan.loanAmount * 0.5 : 0
   let eligible = true
   let reason = ''
-  if (!customer.pan || !customer.aadhar) {
-    eligible = false
-    reason = 'PAN and Aadhaar are required.'
-  } else if (age > 60) {
+  //  if (!customer.pan || !customer.aadhar) {
+  //   eligible = false
+  //   reason = 'PAN and Aadhaar are required.'
+  // }
+  if (age > 60) {
     eligible = false
     reason = 'Applicant age exceeds 60 years.'
   } else if (!loan.loanAmount || employer.monthlyIncome < minIncome) {

@@ -2916,6 +2916,20 @@ html {
   margin: 0;
   font-size: 0.9rem;
 }
+/* Target only the Approval Rate chart */
+.approval-rate-card .chart-placeholder {
+  height: auto;
+  padding: 12px;
+}
+
+.approval-rate-card canvas {
+  width: 100% !important;
+  max-width: 220px;
+  max-height: 220px;
+  display: block;
+  margin: 0 auto;
+}
+
 .settings-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));

@@ -180,3 +180,102 @@ window.addEventListener('hashchange', function() {
   const hash = window.location.hash || '#all-loans';
   showSection(hash.substring(1));
 });
+
+
+
+// Fetch data and render charts
+function loadAnalyticsCharts() {
+  fetch("http://localhost:9090/loan-db/getAll")
+    .then(res => res.json())
+    .then(data => {
+      renderMonthlyApplicationsChart(data);
+      renderRevenueTrendsChart(data);
+      renderTopLaptopModelsChart(data);
+      renderApprovalRateChart(data);
+    })
+    .catch(err => console.error("Error loading analytics data:", err));
+}
+
+function renderMonthlyApplicationsChart(applications) {
+  const monthlyCounts = {};
+  applications.forEach(app => {
+    const date = new Date(app.applicationDate);
+    const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+    monthlyCounts[key] = (monthlyCounts[key] || 0) + 1;
+  });
+  const labels = Object.keys(monthlyCounts).sort();
+  const values = labels.map(l => monthlyCounts[l]);
+
+  const ctx = document.createElement("canvas");
+  document.querySelector(".analytics-card:nth-child(1) .chart-placeholder").innerHTML = "";
+  document.querySelector(".analytics-card:nth-child(1) .chart-placeholder").appendChild(ctx);
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{ label: 'Applications', data: values, backgroundColor: '#3b82f6' }]
+    }
+  });
+}
+
+function renderRevenueTrendsChart(applications) {
+  const monthlyRevenue = {};
+  applications.filter(a => a.approvalStatus === "Approved").forEach(app => {
+    const date = new Date(app.confirmationDate);
+    const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+    monthlyRevenue[key] = (monthlyRevenue[key] || 0) + (app.loanAmount || 0);
+  });
+  const labels = Object.keys(monthlyRevenue).sort();
+  const values = labels.map(l => monthlyRevenue[l]);
+
+  const ctx = document.createElement("canvas");
+  document.querySelector(".analytics-card:nth-child(2) .chart-placeholder").innerHTML = "";
+  document.querySelector(".analytics-card:nth-child(2) .chart-placeholder").appendChild(ctx);
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{ label: 'Revenue (₹)', data: values, borderColor: '#10b981', fill: false }]
+    }
+  });
+}
+
+function renderTopLaptopModelsChart(applications) {
+  const modelCounts = {};
+  applications.forEach(app => {
+    modelCounts[app.laptopId] = (modelCounts[app.laptopId] || 0) + 1;
+  });
+  const labels = Object.keys(modelCounts);
+  const values = labels.map(l => modelCounts[l]);
+
+  const ctx = document.createElement("canvas");
+  document.querySelector(".analytics-card:nth-child(3) .chart-placeholder").innerHTML = "";
+  document.querySelector(".analytics-card:nth-child(3) .chart-placeholder").appendChild(ctx);
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels,
+      datasets: [{ label: 'Applications per Laptop', data: values, backgroundColor: ['#f59e0b', '#6366f1', '#ef4444', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899'] }]
+    }
+  });
+}
+
+function renderApprovalRateChart(applications) {
+  const approved = applications.filter(a => a.approvalStatus === 'Approved').length;
+  const rejected = applications.filter(a => a.approvalStatus === 'Rejected').length;
+  const pending = applications.filter(a => a.approvalStatus === 'Pending').length;
+
+  const ctx = document.createElement("canvas");
+  document.querySelector(".analytics-card:nth-child(4) .chart-placeholder").innerHTML = "";
+  document.querySelector(".analytics-card:nth-child(4) .chart-placeholder").appendChild(ctx);
+  new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: ['Approved', 'Rejected', 'Pending'],
+      datasets: [{ data: [approved, rejected, pending], backgroundColor: ['#10b981', '#ef4444', '#fbbf24'] }]
+    }
+  });
+}
+
+// Call inside DOMContentLoaded
+loadAnalyticsCharts();

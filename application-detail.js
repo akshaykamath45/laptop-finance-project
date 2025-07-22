@@ -8,22 +8,63 @@ if (!localStorage.getItem("currentUser")) {
   window.location.href = "login.html";
 }
 
-function renderApplicationDetail() {
-  const container = document.getElementById('appdetail-container')
-  let app = JSON.parse(localStorage.getItem('selectedApplication') || '{}')
-  const appId = getQueryParam('id')
-  if ((!app.applicationId || app.applicationId !== appId) && appId) {
-    // Try to fetch from allApplications
-    const allApps = JSON.parse(localStorage.getItem('allApplications') || '[]')
-    app = allApps.find(a => a.applicationId === appId) || {}
+async function fetchCustomerDetails(customerId) {
+  try {
+    const res = await fetch(`http://localhost:9090/customer-db/get/${customerId}`);
+    const data = await res.json();
+    return data.t || {};
+  } catch (e) {
+    return {};
   }
-  if (!app.applicationId) {
+}
+
+async function fetchLaptopDetails(laptopId) {
+  try {
+    const res = await fetch(`http://localhost:9090/laptop-db/get/${laptopId}`);
+    const data = await res.json();
+    return data;
+  } catch (e) {
+    return {};
+  }
+}
+
+async function fetchApplicationDetails(appId) {
+  try {
+    const res = await fetch(`http://localhost:9090/loan-db/get/${appId}`);
+    if (!res.ok) return null;
+    return await res.json();
+  } catch (e) {
+    return null;
+  }
+}
+
+async function renderApplicationDetail() {
+  const container = document.getElementById('appdetail-container')
+  const appId = getQueryParam('id')
+  let app = null;
+  if (appId) {
+    app = await fetchApplicationDetails(appId);
+  }
+  console.log('Loaded application:', app);
+  if (!app || !app.loanId) {
     container.innerHTML = '<div class="appdetail-empty">Application not found.</div>'
     return
   }
 
+  // Fetch customer details from backend if customerId exists
+  let customer = {};
+  if (app.customerId) {
+    customer = await fetchCustomerDetails(app.customerId);
+  }
+
+  // Fetch laptop details from backend if laptopId exists
+  let laptop = {};
+  if (app.laptopId) {
+    laptop = await fetchLaptopDetails(app.laptopId);
+  }
+
   // --- EMI Table & Alert Logic (copied from my-applications.js) ---
-  const emiSchedule = app.emiSchedule || []
+  const emiSchedule = Array.isArray(app.emiSchedule) ? app.emiSchedule : [];
   let firstUnpaidIdx = emiSchedule.findIndex(e => !e.emiStatus || e.emiStatus === 'Pending')
   if (firstUnpaidIdx === -1) firstUnpaidIdx = null
   let emiDueAlert = ''
@@ -46,32 +87,31 @@ function renderApplicationDetail() {
       <h2><i class="fas fa-file-alt"></i> Application Details</h2>
     </div>
     <div class="appdetail-section appdetail-status">
-      <div><strong>Application ID:</strong> ${app.applicationId}</div>
+      <div><strong>Application ID:</strong> ${app.loanId}</div>
       <div><strong>Status:</strong> <span class="allapps-status-badge ${app.approvalStatus?.toLowerCase()}">${app.approvalStatus}</span></div>
       <div><strong>Loan Active:</strong> ${app.loanActive === 'YES' ? '<span style="color:#38d39f;font-weight:600;">YES</span>' : '<span style="color:#f87171;font-weight:600;">NO</span>'}</div>
       ${app.approvalStatus === 'Rejected' ? `<div><strong>Reason:</strong> <span style="color:#f87171;">${app.rejectionReason}</span></div>` : ''}
     </div>
     <div class="appdetail-section appdetail-customer">
       <h3>Customer Info</h3>
-      <div><strong>Name:</strong> ${app.customer.name}</div>
-      <div><strong>Email:</strong> ${app.customer.email}</div>
-      <div><strong>Phone:</strong> ${app.customer.phone}</div>
-      <div><strong>PAN:</strong> ${app.customer.pan}</div>
-      <div><strong>Aadhaar:</strong> ${app.customer.aadhar}</div>
+      <div><strong>Name:</strong> ${customer.customerName || '-'}</div>
+      <div><strong>Email:</strong> ${customer.email || '-'}</div>
+      <div><strong>Phone:</strong> ${customer.phone || '-'}</div>
+      <div><strong>PAN:</strong> ${customer.panNumber || '-'}</div>
+      <div><strong>Aadhaar:</strong> ${customer.aadharNumber || '-'}</div>
     </div>
     <div class="appdetail-section appdetail-laptop">
       <h3>Laptop Info</h3>
-      <div><strong>Brand:</strong> ${app.laptop.brand}</div>
-      <div><strong>Model:</strong> ${app.laptop.model}</div>
-      <div><strong>Price:</strong> ₹${app.laptop.price?.toLocaleString('en-IN')}</div>
+      <div><strong>Brand:</strong> ${laptop.brand || '-'}</div>
+      <div><strong>Model:</strong> ${laptop.model || '-'}</div>
+      <div><strong>Price:</strong> ₹${laptop.price ? laptop.price.toLocaleString('en-IN') : '-'}</div>
     </div>
     <div class="appdetail-section appdetail-loan">
       <h3>Loan Summary</h3>
-      <div><strong>Loan Amount:</strong> ₹${app.loanSummary.loanAmount?.toLocaleString('en-IN')}</div>
-      <div><strong>Tenure:</strong> ${app.loanSummary.tenureMonths} months</div>
-      <div><strong>Interest Rate:</strong> ${app.loanSummary.interestRate}%</div>
-      <div><strong>Monthly EMI:</strong> ₹${app.loanSummary.monthlyEMI?.toLocaleString('en-IN', {maximumFractionDigits:0})}</div>
-      <div><strong>Total Payable:</strong> ₹${app.loanSummary.totalPayable?.toLocaleString('en-IN', {maximumFractionDigits:0})}</div>
+      <div><strong>Loan Amount:</strong> ₹${app.loanAmount?.toLocaleString('en-IN')}</div>
+      <div><strong>Tenure:</strong> ${app.tenureMonths} months</div>
+      <div><strong>Interest Rate:</strong> ${app.interestRate}%</div>
+      <div><strong>Monthly EMI:</strong> ₹${app.emiAmount?.toLocaleString('en-IN', {maximumFractionDigits:0})}</div>
     </div>
     <div class="appdetail-section appdetail-emi">
       <h3>EMI Schedule</h3>
@@ -113,10 +153,10 @@ function renderApplicationDetail() {
   document.querySelectorAll('.btn-pay-emi').forEach(btn => {
     btn.onclick = function() {
       const emiNumber = this.getAttribute('data-emi')
-      localStorage.setItem('currentEmiToPay', JSON.stringify({ appId: app.applicationId, emiNumber: Number(emiNumber) }))
+      localStorage.setItem('currentEmiToPay', JSON.stringify({ appId: app.loanId, emiNumber: Number(emiNumber) }))
       window.location.href = 'emi-payment.html'
     }
   })
 }
 
-document.addEventListener('DOMContentLoaded', renderApplicationDetail) 
+document.addEventListener('DOMContentLoaded', () => { renderApplicationDetail(); }) 
