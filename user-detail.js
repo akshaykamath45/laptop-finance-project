@@ -11,6 +11,9 @@ document.addEventListener('DOMContentLoaded', async function() {
       <div class="appdetail-header">
         <h2><i class="fas fa-user-shield"></i> Admin User</h2>
       </div>
+      <div class="appdetail-actions" style="margin: 12px 0 20px 0;">
+        <button class="btn btn-secondary" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+      </div>
       <div class="appdetail-section">
         <div><strong>Email:</strong> admin@demo.com</div>
         <div><strong>DOB:</strong> 01/01/1980</div>
@@ -36,6 +39,9 @@ document.addEventListener('DOMContentLoaded', async function() {
   container.querySelector('.user-details').innerHTML = `
     <div class="appdetail-header">
       <h2><i class="fas fa-user"></i> My Profile</h2>
+    </div>
+    <div class="appdetail-actions" style="margin: 12px 0 20px 0;">
+      <button class="btn btn-secondary" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
     </div>
     <div class="appdetail-section appdetail-customer">
       <h3>Personal Info</h3>

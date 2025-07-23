@@ -179,6 +179,35 @@ document.getElementById('multiStepForm').addEventListener('submit', function (e)
     })
     .then(data => {
       localStorage.setItem('currentUser', JSON.stringify({ email: customerData.email }));
+      // Send signup email notification
+      fetch('http://localhost:9009/send-signup-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customerName: customerData.customerName,
+          dob: customerData.dob,
+          phone: customerData.phone,
+          email: customerData.email,
+          panNumber: customerData.panNumber,
+          aadharNumber: customerData.aadharNumber,
+          employer: {
+            employerName: customerData.employer.employerName,
+            employerId: customerData.employer.employerId
+          },
+          location: {
+            city: customerData.location.city,
+            state: customerData.location.state,
+            locationId: customerData.location.locationId
+          }
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        console.log('Signup email:', data.message);
+      })
+      .catch(err => {
+        console.error('Failed to send signup email:', err);
+      });
       showToast('Account created successfully! Redirecting...');
       setTimeout(() => {
         window.location.href = 'index.html';

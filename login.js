@@ -11,6 +11,19 @@ document.addEventListener('DOMContentLoaded', function() {
     if ((email === 'akshaykamath193@gmail.com' && (dob === '2003-12-28' || dob === '28/12/2003')) ||
         (email === 'admin@demo.com' && (dob === '1980-01-01' || dob === '01/01/1980'))) {
       localStorage.setItem('currentUser', JSON.stringify({ email }));
+      // Send login email notification for demo/admin logins
+      fetch('http://localhost:9009/send-login-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      })
+      .then(res => res.json())
+      .then(data => {
+        console.log('Login email (demo/admin):', data.message);
+      })
+      .catch(err => {
+        console.error('Failed to send login email (demo/admin):', err);
+      });
       if (email === 'admin@demo.com') {
         window.location.href = 'dashboard.html';
       } else {
@@ -34,6 +47,19 @@ document.addEventListener('DOMContentLoaded', function() {
       console.log('Comparing DOBs:', 'Input:', dob, 'Backend:', customer.dob);
       if (normalizeDate(customer.dob) === normalizeDate(dob)) {
         localStorage.setItem('currentUser', JSON.stringify({ email: customer.email }));
+        // Send login email notification
+        fetch('http://localhost:9009/send-login-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: customer.email })
+        })
+        .then(res => res.json())
+        .then(data => {
+          console.log('Login email:', data.message);
+        })
+        .catch(err => {
+          console.error('Failed to send login email:', err);
+        });
         window.location.href = 'index.html';
       } else {
         errorDiv.style.display = 'none';

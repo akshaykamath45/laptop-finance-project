@@ -2253,7 +2253,7 @@ html {
   box-shadow: 0 4px 24px var(--shadow-color);
   padding: 22px 22px 16px 22px;
   color: var(--text-primary);
-  margin-bottom: 0;
+  margin-bottom: 32px;
   margin-top: 0;
 }
 .appdetail-section h3 {
@@ -3043,6 +3043,10 @@ html {
   .stat-number {
     font-size: 1.4rem;
   }
+}
+
+.appdetail-section > div {
+  margin-bottom: 8px;
 }
 
 
