@@ -1,7 +1,3 @@
-if (!localStorage.getItem("currentUser")) {
-  window.location.href = "login.html";
-}
-
 // --- Loan Confirmation Page Logic ---
 function getNextApplicationId() {
   const apps = JSON.parse(localStorage.getItem('loanApplications') || '[]')

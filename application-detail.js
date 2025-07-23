@@ -31,10 +31,28 @@ async function fetchLaptopDetails(laptopId) {
 async function fetchApplicationDetails(appId) {
   try {
     const res = await fetch(`http://localhost:9090/loan-db/get/${appId}`);
-    if (!res.ok) return null;
+    console.log('fetchApplicationDetails status:', res.status);
+    if (!res.ok) {
+      const text = await res.text();
+      console.log('fetchApplicationDetails error response:', text);
+      return null;
+    }
+    const data = await res.json();
+    console.log('fetchApplicationDetails data:', data);
+    return data;
+  } catch (e) {
+    console.error('fetchApplicationDetails exception:', e);
+    return null;
+  }
+}
+
+async function fetchEmiSchedule(loanId) {
+  try {
+    const res = await fetch(`http://localhost:9090/emi-db/getByLoan/${loanId}`);
+    if (!res.ok) return [];
     return await res.json();
   } catch (e) {
-    return null;
+    return [];
   }
 }
 
@@ -63,8 +81,13 @@ async function renderApplicationDetail() {
     laptop = await fetchLaptopDetails(app.laptopId);
   }
 
+  // Fetch EMI schedule if not present in app
+  let emiSchedule = Array.isArray(app.emiSchedule) ? app.emiSchedule : [];
+  if (!emiSchedule.length) {
+    emiSchedule = await fetchEmiSchedule(app.loanId);
+  }
+
   // --- EMI Table & Alert Logic (copied from my-applications.js) ---
-  const emiSchedule = Array.isArray(app.emiSchedule) ? app.emiSchedule : [];
   let firstUnpaidIdx = emiSchedule.findIndex(e => !e.emiStatus || e.emiStatus === 'Pending')
   if (firstUnpaidIdx === -1) firstUnpaidIdx = null
   let emiDueAlert = ''
@@ -132,7 +155,7 @@ async function renderApplicationDetail() {
     let penalty = ''
     let penaltyAmount = ''
     let isOverdue = false
-    if ((!emi.emiStatus || emi.emiStatus === 'Pending') && new Date(emi.dueDate) < new Date()) {
+    if ((!emi.emiStatus || emi.emiStatus === 'Pending' || emi.emiStatus === 'Unpaid') && new Date(emi.emiDueDate) < new Date()) {
       isOverdue = true
       penalty = 'YES'
       penaltyAmount = 100.00
@@ -140,11 +163,11 @@ async function renderApplicationDetail() {
     const isFirstUnpaid = idx === firstUnpaidIdx
     return `<tr class="${isFirstUnpaid ? 'emi-unpaid-row' : ''}">
       <td>${emi.emiNumber}</td>
-      <td>${emi.dueDate}</td>
+      <td>${emi.emiDueDate || '-'}</td>
       <td>${emi.emiPaidDate || '-'}</td>
-      <td>₹${emi.emiAmount?.toLocaleString('en-IN', {maximumFractionDigits:0})}</td>
+      <td>₹${emi.emiPaidAmount ? emi.emiPaidAmount.toLocaleString('en-IN', {maximumFractionDigits:0}) : '-'}</td>
       <td>${emi.emiStatus === 'Paid' ? '<span class="emi-paid">Paid</span>' : '<span class="emi-pending">Pending</span>'}</td>
-      <td>${penalty === 'YES' ? `<span class="emi-penalty">₹${penaltyAmount}</span>` : '-'}</td>
+      <td>${emi.penaltyApplied === 'YES' ? `<span class="emi-penalty">₹${emi.penaltyAmount}</span>` : '-'}</td>
       <td>${isFirstUnpaid && emi.emiStatus !== 'Paid' ? `<button class="btn btn-primary btn-pay-emi" data-emi="${emi.emiNumber}">Pay EMI</button>` : ''}</td>
     </tr>`
   }).join('')

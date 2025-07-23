@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Loan Application Details - LaptopFinance</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Profile - LaptopFinance</title>
   <link rel="stylesheet" href="styles.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -26,22 +27,15 @@
     </div>
   </nav>
   <main class="appdetail-main">
-    <div class="container appdetail-container">
-      <div class="appdetail-header">
-        <h2><i class="fas fa-file-alt"></i> Loan Application Details</h2>
-      </div>
-      <div class="appdetail-section appdetail-loan" id="loan-details"></div>
-      <div class="appdetail-section appdetail-emi">
-        <h3>EMI Schedule</h3>
-        <div id="emi-details"></div>
-      </div>
-      <div class="appdetail-actions">
-        <button class="btn btn-secondary" onclick="window.history.back()"><i class="fas fa-arrow-left"></i> Back</button>
+    <div class="container appdetail-container" id="user-detail-container">
+      <div class="user-details"><!-- User details will be rendered by JS --></div>
+      <div class="appdetail-actions" style="margin-top:32px;">
+        <button class="btn btn-secondary" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
       </div>
     </div>
   </main>
   <script src="script.js"></script>
   <script>document.addEventListener('DOMContentLoaded', function() { renderNavbar(); });</script>
-  <script src="view-loan-application.js"></script>
+  <script src="user-detail.js"></script>
 </body>
-</html>
+</html> 

@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('tenure').addEventListener('change', updateEMICalculation)
   document.getElementById('interest-rate').addEventListener('input', updateEMICalculation)
   document.getElementById('buy-finance-btn').addEventListener('click', scrollToEMI)
-  document.getElementById('proceed-apply-btn').addEventListener('click', function(e) {
+  document.getElementById('proceed-apply-btn').addEventListener('click', async function(e) {
     e.preventDefault()
     let downPayment = parseInt(document.getElementById('down-payment').value) || 0
     if (downPayment > laptop.price - 5000) downPayment = laptop.price - 5000
@@ -106,7 +106,6 @@ document.addEventListener('DOMContentLoaded', () => {
       brand: laptop.brand,
       model: laptop.model,
       price: laptop.price,
-      // imageUrl: `https://via.placeholder.com/300x200?text=${laptop.brand}+${laptop.model}`,
       imgurl:laptop.imgurl
     }))
     localStorage.setItem('loanSelection', JSON.stringify({
@@ -115,6 +114,32 @@ document.addEventListener('DOMContentLoaded', () => {
       interestRate,
       emiAmount: emiData.emi
     }))
+    // If logged in, fetch customer details and go to eligibility-result.html
+    const currentUser = localStorage.getItem('currentUser')
+    if (currentUser) {
+      try {
+        const user = JSON.parse(currentUser)
+        // Get customerId from email
+        const res = await fetch(`http://localhost:9090/customer-db/getByEmail/${encodeURIComponent(user.email)}`)
+        const data = await res.json()
+        if (!data.t || !data.t.customerId) throw new Error('No customer found')
+        // Fetch full customer details
+        const res2 = await fetch(`http://localhost:9090/customer-db/get/${data.t.customerId}`)
+        const data2 = await res2.json()
+        const customer = data2.t || {}
+        localStorage.setItem('loanApplication', JSON.stringify({
+          customer,
+          employer: customer.employer,
+          location: customer.location
+        }))
+        window.location.href = 'eligibility-result.html'
+        return
+      } catch (e) {
+        alert('Could not fetch your details. Please try again.')
+        return
+      }
+    }
+    // Not logged in: go to application form
     window.location.href = 'application-form.html'
   })
 })

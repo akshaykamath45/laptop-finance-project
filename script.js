@@ -316,7 +316,7 @@ function renderNavbar() {
   if (avatar && dropdown) {
     avatar.addEventListener("click", (e) => {
       e.stopPropagation();
-      dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+      window.location.href = 'user-detail.html';
     });
     document.addEventListener("click", (e) => {
       if (!dropdown.contains(e.target) && !avatar.contains(e.target)) {

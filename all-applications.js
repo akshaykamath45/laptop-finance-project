@@ -4,10 +4,24 @@ if (!localStorage.getItem("currentUser")) {
 // --- All Applications Page Logic ---
 async function renderAllApplications() {
   const container = document.getElementById('allapps-container');
-  // Get customerId from localStorage
-  const customerId = localStorage.getItem('customerId');
+  // Get customerId from localStorage, or fetch using email if missing
+  let customerId = localStorage.getItem('customerId');
   if (!customerId) {
-    container.innerHTML = '<div class="allapps-empty">No customer ID found. Please log in again or reapply."</div>';
+    // Try to fetch customerId using logged-in user's email
+    try {
+      const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+      const res = await fetch(`http://localhost:9090/customer-db/getByEmail/${encodeURIComponent(currentUser.email)}`);
+      const data = await res.json();
+      customerId = data.t?.customerId;
+      if (customerId) {
+        localStorage.setItem('customerId', customerId);
+      }
+    } catch (e) {
+      customerId = null;
+    }
+  }
+  if (!customerId) {
+    container.innerHTML = '<div class="allapps-empty">No customer ID found. Please log in again or reapply.</div>';
     return;
   }
   let allApps = [];

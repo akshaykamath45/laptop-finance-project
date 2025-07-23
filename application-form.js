@@ -1,5 +1,10 @@
 if (!localStorage.getItem("currentUser")) {
   window.location.href = "login.html";
+} else {
+  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+  if (currentUser.email === 'admin@demo.com') {
+    window.location.href = 'dashboard.html';
+  }
 }
 
 // --- Multi-Step Loan Application Form Logic ---
