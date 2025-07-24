@@ -8,7 +8,37 @@ if (!localStorage.getItem("currentUser")) {
   window.location.href = "login.html";
 }
 
-function renderEmiPaymentPage() {
+async function fetchApplicationDetails(appId) {
+  try {
+    const res = await fetch(`http://localhost:9090/loan-db/get/${appId}`);
+    if (!res.ok) return null;
+    return await res.json();
+  } catch (e) {
+    return null;
+  }
+}
+
+async function fetchEmiSchedule(loanId) {
+  try {
+    const res = await fetch(`http://localhost:9090/emi-db/getByLoan/${loanId}`);
+    if (!res.ok) return [];
+    return await res.json();
+  } catch (e) {
+    return [];
+  }
+}
+
+async function fetchLaptopDetails(laptopId) {
+  try {
+    const res = await fetch(`http://localhost:9090/laptop-db/get/${laptopId}`);
+    if (!res.ok) return {};
+    return await res.json();
+  } catch (e) {
+    return {};
+  }
+}
+
+async function renderEmiPaymentPage() {
   const container = document.getElementById('emi-payment-container')
   let currentEmiToPay = null
   try {
@@ -18,30 +48,38 @@ function renderEmiPaymentPage() {
     container.innerHTML = `<div class="myapps-empty">No EMI selected for payment.<br><a href='my-applications.html' class='btn btn-primary' style='margin-top:18px;'>Go to My Applications</a></div>`
     return
   }
-  const allApps = JSON.parse(localStorage.getItem('allApplications') || '[]')
-  const app = allApps.find(a => a.applicationId === currentEmiToPay.appId)
+  // Fetch application and EMI schedule from backend
+  const app = await fetchApplicationDetails(currentEmiToPay.appId)
   if (!app) {
     container.innerHTML = `<div class="myapps-empty">Application not found.<br><a href='my-applications.html' class='btn btn-primary' style='margin-top:18px;'>Go to My Applications</a></div>`
     return
   }
-  const emi = (app.emiSchedule || []).find(e => e.emiNumber == currentEmiToPay.emiNumber)
+  const emiSchedule = await fetchEmiSchedule(currentEmiToPay.appId)
+  const emi = (emiSchedule || []).find(e => e.emiNumber == currentEmiToPay.emiNumber)
   if (!emi) {
     container.innerHTML = `<div class="myapps-empty">EMI not found.<br><a href='my-applications.html' class='btn btn-primary' style='margin-top:18px;'>Go to My Applications</a></div>`
     return
   }
+  // Fetch laptop details using laptopId from app
+  let laptop = { brand: '-', model: '-' }
+  if (app.laptopId) {
+    const laptopData = await fetchLaptopDetails(app.laptopId)
+    laptop = { brand: laptopData.brand || '-', model: laptopData.model || '-' }
+  }
   const isPaid = emi.emiStatus === 'Paid'
   const penalty = emi.penaltyApplied === 'YES' ? (emi.penaltyAmount || 0) : 0
-  const totalPayable = (emi.emiAmount || 0) + penalty
+  const emiAmount = emi.emiAmount || emi.emiPaidAmount || 0
+  const totalPayable = emiAmount + penalty
   // --- Render UI ---
   container.innerHTML = `
     <div class="emi-payment-summary-card">
       <div class="emi-payment-summary-title"><i class="fas fa-credit-card"></i> EMI Payment</div>
       <div class="emi-payment-summary-details">
-        <div><strong>Application ID:</strong> ${app.applicationId}</div>
-        <div><strong>Laptop:</strong> ${app.laptop.brand} ${app.laptop.model}</div>
+        <div><strong>Application ID:</strong> ${app.loanId}</div>
+        <div><strong>Laptop:</strong> ${laptop.brand} ${laptop.model}</div>
         <div><strong>EMI Number:</strong> ${emi.emiNumber}</div>
-        <div><strong>Due Date:</strong> ${emi.dueDate}</div>
-        <div><strong>EMI Amount:</strong> ₹${emi.emiAmount?.toLocaleString('en-IN', {maximumFractionDigits:0})}</div>
+        <div><strong>Due Date:</strong> ${emi.emiDueDate || emi.dueDate || '-'}</div>
+        <div><strong>EMI Amount:</strong> ₹${emiAmount.toLocaleString('en-IN', {maximumFractionDigits:0})}</div>
         <div><strong>Penalty:</strong> ${penalty ? `<span class='emi-penalty'>₹${penalty}</span>` : '-'} </div>
         <div class="emi-payment-total-row"><strong>Total Payable:</strong> <span class="emi-payment-total">₹${totalPayable.toLocaleString('en-IN', {maximumFractionDigits:0})}</span></div>
       </div>
@@ -92,26 +130,22 @@ function renderEmiPaymentPage() {
   })
   // --- Payment Form Submission ---
   const form = container.querySelector('#emi-payment-form')
-  form.onsubmit = function(e) {
+  form.onsubmit = async function(e) {
     e.preventDefault()
     if (isPaid) return false
-    // Simulate payment
-    setTimeout(() => {
-      // Update EMI as paid
-      emi.emiStatus = 'Paid'
-      emi.emiPaidDate = new Date().toISOString().slice(0,10)
-      emi.emiPaidAmount = totalPayable
-      // Save back to allApplications
-      const appIdx = allApps.findIndex(a => a.applicationId === app.applicationId)
-      if (appIdx !== -1) {
-        allApps[appIdx] = app
-        localStorage.setItem('allApplications', JSON.stringify(allApps))
-      }
-      // Remove currentEmiToPay
+    // Call backend to pay EMI
+    try {
+      const res = await fetch(`http://localhost:9090/emi-db/pay/${app.loanId}/${emi.emiNumber}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(totalPayable)
+      })
+      if (!res.ok) throw new Error('Payment failed')
       localStorage.removeItem('currentEmiToPay')
-      // Show modal
-      showPaymentModal(app.applicationId)
-    }, 800)
+      showPaymentModal(app.loanId)
+    } catch (err) {
+      alert('Payment failed: ' + err.message)
+    }
     return false
   }
   // --- Cancel Button ---
@@ -124,10 +158,10 @@ function showPaymentModal(appId) {
   const modal = document.getElementById('emi-payment-modal')
   modal.style.display = 'flex'
   document.getElementById('goToMyAppsBtn').onclick = function() {
-    window.location.href = 'my-applications.html'
+    window.location.href = 'all-applications.html'
   }
   document.getElementById('backToDetailBtn').onclick = function() {
-    window.location.href = `application-detail.html?id=${appId}`
+    window.location.href = 'all-applications.html'
   }
 }
 

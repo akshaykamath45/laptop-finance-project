@@ -53,6 +53,13 @@ function renderEligibilityResult() {
   } else if (employer.monthlyIncome < 20000) {
     eligible = false
     reason = 'Monthly income must be above ₹20,000.'
+  } else {
+    // Calculate EMI for eligibility check
+    const { emi } = calculateEMISchedule(loan.loanAmount, loan.interestRate, loan.tenureMonths)
+    if (emi > 0.15 * employer.monthlyIncome) {
+      eligible = false
+      reason = 'EMI exceeds 15% of your monthly income. Please select a lower loan amount or longer tenure.'
+    }
   }
 
   if (eligible) {
@@ -103,7 +110,7 @@ function renderEligibilityResult() {
         <h2>Sorry, you are not eligible for Laptop Finance</h2>
         <div class="result-reason">Reason: ${reason}</div>
         <div class="result-actions">
-          <button class="btn btn-secondary" onclick="window.location.href='application-form.html'">Edit Application</button>
+          <button class="btn btn-secondary" onclick="window.location.href='user-detail.html'">Edit Application</button>
           <button class="btn btn-primary" onclick="window.location.href='products.html'">Explore Laptops</button>
         </div>
       </div>

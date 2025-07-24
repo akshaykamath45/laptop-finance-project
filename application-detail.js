@@ -88,7 +88,7 @@ async function renderApplicationDetail() {
   }
 
   // --- EMI Table & Alert Logic (copied from my-applications.js) ---
-  let firstUnpaidIdx = emiSchedule.findIndex(e => !e.emiStatus || e.emiStatus === 'Pending')
+  let firstUnpaidIdx = emiSchedule.findIndex(e => !e.emiStatus || e.emiStatus === 'Pending' || e.emiStatus === 'Unpaid')
   if (firstUnpaidIdx === -1) firstUnpaidIdx = null
   let emiDueAlert = ''
   if (firstUnpaidIdx !== null) {
@@ -115,14 +115,6 @@ async function renderApplicationDetail() {
       <div><strong>Loan Active:</strong> ${app.loanActive === 'YES' ? '<span style="color:#38d39f;font-weight:600;">YES</span>' : '<span style="color:#f87171;font-weight:600;">NO</span>'}</div>
       ${app.approvalStatus === 'Rejected' ? `<div><strong>Reason:</strong> <span style="color:#f87171;">${app.rejectionReason}</span></div>` : ''}
     </div>
-    <div class="appdetail-section appdetail-customer">
-      <h3>Customer Info</h3>
-      <div><strong>Name:</strong> ${customer.customerName || '-'}</div>
-      <div><strong>Email:</strong> ${customer.email || '-'}</div>
-      <div><strong>Phone:</strong> ${customer.phone || '-'}</div>
-      <div><strong>PAN:</strong> ${customer.panNumber || '-'}</div>
-      <div><strong>Aadhaar:</strong> ${customer.aadharNumber || '-'}</div>
-    </div>
     <div class="appdetail-section appdetail-laptop">
       <h3>Laptop Info</h3>
       <div><strong>Brand:</strong> ${laptop.brand || '-'}</div>
@@ -136,6 +128,7 @@ async function renderApplicationDetail() {
       <div><strong>Interest Rate:</strong> ${app.interestRate}%</div>
       <div><strong>Monthly EMI:</strong> ₹${app.emiAmount?.toLocaleString('en-IN', {maximumFractionDigits:0})}</div>
     </div>
+    ${app.approvalStatus !== 'Rejected' ? `
     <div class="appdetail-section appdetail-emi">
       <h3>EMI Schedule</h3>
       ${emiDueAlert}
@@ -144,6 +137,7 @@ async function renderApplicationDetail() {
         <tbody id="emi-table-body"></tbody>
       </table>
     </div>
+    ` : ''}
     <div class="appdetail-actions">
       <button class="btn btn-secondary" onclick="window.location.href='all-applications.html'">Back to All Applications</button>
     </div>
@@ -160,7 +154,8 @@ async function renderApplicationDetail() {
       penalty = 'YES'
       penaltyAmount = 100.00
     }
-    const isFirstUnpaid = idx === firstUnpaidIdx
+    const isUnpaid = !emi.emiStatus || emi.emiStatus === 'Pending' || emi.emiStatus === 'Unpaid';
+    const isFirstUnpaid = idx === firstUnpaidIdx;
     return `<tr class="${isFirstUnpaid ? 'emi-unpaid-row' : ''}">
       <td>${emi.emiNumber}</td>
       <td>${emi.emiDueDate || '-'}</td>
@@ -168,7 +163,7 @@ async function renderApplicationDetail() {
       <td>₹${emi.emiPaidAmount ? emi.emiPaidAmount.toLocaleString('en-IN', {maximumFractionDigits:0}) : '-'}</td>
       <td>${emi.emiStatus === 'Paid' ? '<span class="emi-paid">Paid</span>' : '<span class="emi-pending">Pending</span>'}</td>
       <td>${emi.penaltyApplied === 'YES' ? `<span class="emi-penalty">₹${emi.penaltyAmount}</span>` : '-'}</td>
-      <td>${isFirstUnpaid && emi.emiStatus !== 'Paid' ? `<button class="btn btn-primary btn-pay-emi" data-emi="${emi.emiNumber}">Pay EMI</button>` : ''}</td>
+      <td>${isFirstUnpaid && isUnpaid ? `<button class="btn btn-primary btn-pay-emi" data-emi="${emi.emiNumber}">Pay EMI</button>` : ''}</td>
     </tr>`
   }).join('')
 

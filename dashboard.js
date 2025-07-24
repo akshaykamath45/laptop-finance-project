@@ -98,7 +98,19 @@ function loadRecentApplications(applications) {
         <td>${app.customerId}</td>
         <td>${app.laptopId}</td>
         <td>₹${(app.loanAmount || 0).toLocaleString()}</td>
-        <td><span class="status-badge ${statusClass}">${app.approvalStatus || 'Pending'}</span></td>
+        <td>
+          ${
+            app.approvalStatus === 'Pending'
+              ? `<div class="form-group" style="margin-bottom:0;">
+                    <select class="dashboard-status-dropdown" data-loan-id="${app.loanId}">
+                      <option value="Pending" ${app.approvalStatus === 'Pending' ? 'selected' : ''}>Pending</option>
+                      <option value="Approved">Approved</option>
+                      <option value="Rejected">Rejected</option>
+                    </select>
+                 </div>`
+              : `<span class="status-badge ${statusClass}">${app.approvalStatus}</span>`
+          }
+        </td>
         <td>${appDate}</td>
         <td>
           <button class="btn btn-small" onclick="viewLoanApplication('${app.loanId}')">View</button>
@@ -109,6 +121,43 @@ function loadRecentApplications(applications) {
 
   tableHTML += '</tbody></table>';
   container.innerHTML = tableHTML;
+
+  // Add event listeners to status dropdowns
+  container.querySelectorAll('.dashboard-status-dropdown').forEach(dropdown => {
+    dropdown.addEventListener('change', function() {
+      const newStatus = this.value;
+      const loanId = this.getAttribute('data-loan-id');
+      const app = applications.find(a => a.loanId === loanId);
+      if (!app) return;
+      if (app.approvalStatus !== 'Pending') return; // extra safety
+
+      // Prepare updated loan object
+      const updatedLoan = { ...app, approvalStatus: newStatus };
+      if (newStatus === 'Approved') {
+        updatedLoan.loanActive = 'Yes';
+      } else {
+        updatedLoan.loanActive = 'No';
+      }
+      if (newStatus === 'Rejected') {
+        updatedLoan.rejectionReason = prompt('Enter rejection reason:', app.rejectionReason || '');
+      }
+
+      fetch('http://localhost:9090/loan-db/update', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedLoan)
+      })
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to update status');
+        this.disabled = true; // Disable dropdown after change
+        loadAllLoansData(); // Refresh dashboard
+      })
+      .catch(err => {
+        alert('Error updating status: ' + err.message);
+        this.value = app.approvalStatus; // revert on error
+      });
+    });
+  });
 }
 
 function viewLoanApplication(loanId) {
@@ -125,7 +174,13 @@ function loadCustomersData() {
         .then(applications => {
           const uniqueCustomerIds = [...new Set(applications.map(app => app.customerId))];
           const activeCustomers = uniqueCustomerIds.length;
-          const premiumCustomers = applications.filter(app => (app.loanAmount || 0) > 100000).length;
+          // Calculate premium customers by total borrowed per customer
+          const customerBorrowedMap = {};
+          applications.forEach(app => {
+            if (!app.customerId) return;
+            customerBorrowedMap[app.customerId] = (customerBorrowedMap[app.customerId] || 0) + (app.loanAmount || 0);
+          });
+          const premiumCustomers = Object.values(customerBorrowedMap).filter(total => total > 100000).length;
           document.getElementById('total-customers').textContent = users.length;
           document.getElementById('active-customers').textContent = activeCustomers;
           document.getElementById('premium-customers').textContent = premiumCustomers;

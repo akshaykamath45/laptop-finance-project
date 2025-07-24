@@ -3049,4 +3049,21 @@ html {
   margin-bottom: 8px;
 }
 
+.dashboard-status-dropdown {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 7px 12px;
+  font-size: 1rem;
+  outline: none;
+  transition: border 0.2s;
+  min-width: 120px;
+  margin: 0;
+  box-shadow: none;
+}
+.dashboard-status-dropdown:focus {
+  border: 1.5px solid var(--primary-color);
+}
+
 

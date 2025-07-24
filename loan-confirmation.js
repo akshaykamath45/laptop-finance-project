@@ -121,7 +121,7 @@ function renderConfirmation() {
           emiNumber: emi.emiNumber,
           emiDueDate: toIsoDate(emi.dueDate), // convert to ISO format
           emiPaidDate: null, // use null for not paid
-          emiPaidAmount: 0,
+          emiPaidAmount: emi.emiAmount, // set to the correct EMI amount
           emiStatus: "Unpaid", // match DB allowed value
           penaltyApplied: "No", // match DB allowed value
           penaltyAmount: 0
