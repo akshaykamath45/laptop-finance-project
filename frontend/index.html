@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Customer Registration</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h2>Customer Registration Form</h2>
+  <form id="customerForm">
+    <label>Customer Name <input type="text" name="customerName" required value="Akshay Kamath"></label>
+    <label>DOB <input type="date" name="dob" required value="1995-07-15"></label>
+    <label>Phone <input type="text" name="phone" required value="9876543210"></label>
+    <label>Email <input type="email" name="email" required value="akshaykamath193@gmail.com"></label>
+    <label>PAN Number <input type="text" name="panNumber" required value="ABCDE1234F"></label>
+    <label>Aadhar Number <input type="text" name="aadharNumber" required value="123456789012"></label>
+
+    <label>Employer
+      <select name="employerId" required>
+        <option value="EMP001">Infosys</option>
+        <option value="EMP002">Wipro</option>
+        <option value="EMP003">Patel Electronics</option>
+        <option value="EMP004" selected>HCL</option>
+        <option value="EMP005">TCS</option>
+        <option value="EMP006">Axis Bank</option>
+        <option value="EMP007">Capgemini</option>
+        <option value="EMP008">Cognizant</option>
+        <option value="EMP009">Self Business</option>
+        <option value="EMP010">Adobe</option>
+        <option value="EMP011">HDFC Bank</option>
+      </select>
+    </label>
+
+    <label>Location
+      <select name="locationId" required>
+        <option value="LOC001">Pune</option>
+        <option value="LOC002">Ahmedabad</option>
+        <option value="LOC003">Jaipur</option>
+        <option value="LOC004">Surat</option>
+        <option value="LOC005">Bhopal</option>
+        <option value="LOC006" selected>Delhi</option>
+        <option value="LOC007">Lucknow</option>
+        <option value="LOC008">Indore</option>
+        <option value="LOC009">Hyderabad</option>
+        <option value="LOC010">Kolkata</option>
+        <option value="LOC011">Chandigarh</option>
+        <option value="LOC012">Ranchi</option>
+      </select>
+    </label>
+
+    <button type="submit">Submit</button>
+    <p id="responseMsg"></p>
+  </form>
+
+  <h2>Login</h2>
+  <form id="loginForm">
+    <label>Email <input type="email" name="email" required></label>
+    <label>DOB <input type="date" name="dob" required></label>
+    <button type="submit">Login</button>
+    <p id="loginResponseMsg"></p>
+  </form>
+
+  <script>
+    const employerMap = {
+      EMP001: "Infosys", EMP002: "Wipro", EMP003: "Patel Electronics",
+      EMP004: "HCL", EMP005: "TCS", EMP006: "Axis Bank",
+      EMP007: "Capgemini", EMP008: "Cognizant", EMP009: "Self Business",
+      EMP010: "Adobe", EMP011: "HDFC Bank"
+    };
+
+    const locationMap = {
+      LOC001: ["Pune", "Maharashtra"], LOC002: ["Ahmedabad", "Gujarat"],
+      LOC003: ["Jaipur", "Rajasthan"], LOC004: ["Surat", "Gujarat"],
+      LOC005: ["Bhopal", "MP"], LOC006: ["Delhi", "Delhi"],
+      LOC007: ["Lucknow", "UP"], LOC008: ["Indore", "MP"],
+      LOC009: ["Hyderabad", "Telangana"], LOC010: ["Kolkata", "West Bengal"],
+      LOC011: ["Chandigarh", "Chandigarh"], LOC012: ["Ranchi", "Jharkhand"]
+    };
+
+    document.getElementById("customerForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const form = e.target;
+      const formData = new FormData(form);
+
+      const employerId = formData.get("employerId");
+      const locationId = formData.get("locationId");
+
+      const data = {
+        customerName: formData.get("customerName"),
+        dob: formData.get("dob"),
+        phone: formData.get("phone"),
+        email: formData.get("email"),
+        panNumber: formData.get("panNumber"),
+        aadharNumber: formData.get("aadharNumber"),
+        employer: {
+          employerId,
+          employerName: employerMap[employerId],
+          employmentType: "Salaried", // You can modify this if needed
+          monthlyIncome: 30000 // Placeholder, modify if dynamic
+        },
+        location: {
+          locationId,
+          city: locationMap[locationId][0],
+          state: locationMap[locationId][1]
+        }
+      };
+
+      try {
+        const res = await fetch("http://localhost:9009/send-signup-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        });
+
+        const msg = await res.json();
+        document.getElementById("responseMsg").textContent = msg.message || msg.error;
+        document.getElementById("responseMsg").className = msg.message ? "success" : "error";
+        form.reset();
+      } catch (err) {
+        console.error(err);
+        document.getElementById("responseMsg").textContent = "Something went wrong.";
+      }
+    });
+
+    document.getElementById("loginForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const form = e.target;
+      const formData = new FormData(form);
+      const data = {
+        email: formData.get("email"),
+        dob: formData.get("dob")
+      };
+      try {
+        const res = await fetch("http://localhost:9009/send-login-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: data.email })
+        });
+        const msg = await res.json();
+        document.getElementById("loginResponseMsg").textContent = msg.message || msg.error;
+        document.getElementById("loginResponseMsg").className = msg.message ? "success" : "error";
+        form.reset();
+      } catch (err) {
+        console.error(err);
+        document.getElementById("loginResponseMsg").textContent = "Something went wrong.";
+      }
+    });
+  </script>
+</body>
+</html>
