@@ -1,0 +1,117 @@
+.laptop-search-bar {
+  display: flex;
+  justify-content: center;
+  margin: 1.5rem 0 1rem 0;
+}
+.laptop-search-bar input {
+  width: 100%;
+  max-width: 400px;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 24px;
+  outline: none;
+  transition: border 0.2s;
+}
+.laptop-search-bar input:focus {
+  border: 1.5px solid #1976d2;
+}
+
+.laptop-grid {
+  width: 100%;
+  margin: 0 auto;
+  max-width: 1200px;
+}
+.laptop-grid-inner {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+@media (min-width: 600px) {
+  .laptop-grid-inner {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (min-width: 900px) {
+  .laptop-grid-inner {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+.laptop-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  transition: box-shadow 0.2s;
+}
+.laptop-card:hover {
+  box-shadow: 0 4px 16px rgba(25, 118, 210, 0.15);
+}
+.laptop-card img {
+  object-fit: contain;
+  max-height: 180px;
+  background: #f5f5f5;
+  width: 100%;
+  border-bottom: 1px solid #eee;
+}
+.specs {
+  margin: 0.5rem 0;
+  color: #555;
+  font-size: 0.95rem;
+}
+.price {
+  font-weight: bold;
+  color: #1976d2;
+  margin-bottom: 0.5rem;
+}
+.loan-form-container {
+  margin: 1rem 0 0.5rem 0;
+  padding: 1rem;
+  background: #f8faff;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(25, 118, 210, 0.07);
+}
+.form-row {
+  margin-bottom: 0.75rem;
+}
+.form-row input {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #bbb;
+  border-radius: 6px;
+  outline: none;
+  transition: border 0.2s;
+}
+.form-row input:focus {
+  border: 1.5px solid #1976d2;
+}
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+.success-message {
+  color: #388e3c;
+  margin-top: 0.75rem;
+  font-weight: 500;
+}
+.no-results {
+  text-align: center;
+  color: #888;
+  margin: 2rem 0;
+}
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+.error-message {
+  color: #d32f2f;
+  text-align: center;
+  margin: 2rem 0;
+}

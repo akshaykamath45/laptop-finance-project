@@ -1,0 +1,31 @@
+.customer-table {
+  width: 100%;
+  margin: 0 auto;
+  background: #fff;
+}
+
+.loans-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.5rem;
+}
+.loans-table th, .loans-table td {
+  border: 1px solid #e0e0e0;
+  padding: 0.5rem;
+  text-align: left;
+}
+.no-loans {
+  color: #888;
+  padding: 0.5rem 0;
+}
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+.error-message {
+  color: #d32f2f;
+  text-align: center;
+  margin: 2rem 0;
+}

@@ -1,0 +1,36 @@
+<ng-container *ngIf="loading(); else loaded">
+  <div class="loading-container">
+    <mat-spinner></mat-spinner>
+  </div>
+</ng-container>
+<ng-template #loaded>
+  <div *ngIf="error(); else loanTable" class="error-message">
+    {{ error() }}
+  </div>
+  <ng-template #loanTable>
+    <table mat-table [dataSource]="loans()" class="mat-elevation-z2 loan-table">
+      <ng-container matColumnDef="loanId">
+        <th mat-header-cell *matHeaderCellDef>Loan ID</th>
+        <td mat-cell *matCellDef="let loan">{{ loan.loanId }}</td>
+      </ng-container>
+      <ng-container matColumnDef="customerId">
+        <th mat-header-cell *matHeaderCellDef>Customer ID</th>
+        <td mat-cell *matCellDef="let loan">{{ loan.customerId }}</td>
+      </ng-container>
+      <ng-container matColumnDef="laptopId">
+        <th mat-header-cell *matHeaderCellDef>Laptop ID</th>
+        <td mat-cell *matCellDef="let loan">{{ loan.laptopId }}</td>
+      </ng-container>
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let loan">{{ loan.status }}</td>
+      </ng-container>
+      <ng-container matColumnDef="emiDetails">
+        <th mat-header-cell *matHeaderCellDef>EMI Details</th>
+        <td mat-cell *matCellDef="let loan">{{ loan.emiDetails }}</td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </ng-template>
+</ng-template>

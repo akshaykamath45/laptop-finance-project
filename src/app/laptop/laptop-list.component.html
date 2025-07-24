@@ -1,0 +1,52 @@
+<div class="laptop-search-bar">
+  <input type="text" [(ngModel)]="search" placeholder="Search by brand or specs..." />
+</div>
+<ng-container *ngIf="loading(); else loaded">
+  <div class="loading-container">
+    <mat-spinner></mat-spinner>
+  </div>
+</ng-container>
+<ng-template #loaded>
+  <div *ngIf="error(); else laptopGrid" class="error-message">
+    {{ error() }}
+  </div>
+  <ng-template #laptopGrid>
+    <div class="laptop-grid">
+      <div class="laptop-grid-inner">
+        <mat-card class="laptop-card" *ngFor="let laptop of filteredLaptops()">
+          <img mat-card-image [src]="laptop.imgUrl" [alt]="laptop.brand" />
+          <mat-card-title>{{ laptop.brand }}</mat-card-title>
+          <mat-card-content>
+            <div class="specs">{{ laptop.specs }}</div>
+            <div class="price">₹{{ laptop.price | number }}</div>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-raised-button color="primary" (click)="openLoanForm(laptop.id)">Apply for Loan</button>
+          </mat-card-actions>
+          <div *ngIf="applyingLaptopId === laptop.id" class="loan-form-container">
+            <form (ngSubmit)="submitLoanForm(laptop)" #loanFormRef="ngForm">
+              <div class="form-row">
+                <input type="text" [(ngModel)]="loanForm.customerName" name="customerName" placeholder="Your Name" required />
+              </div>
+              <div class="form-row">
+                <input type="email" [(ngModel)]="loanForm.email" name="email" placeholder="Email" required />
+              </div>
+              <div class="form-row">
+                <input type="number" [(ngModel)]="loanForm.amount" name="amount" placeholder="Loan Amount" min="1" required />
+              </div>
+              <div class="form-row">
+                <input type="number" [(ngModel)]="loanForm.tenure" name="tenure" placeholder="Tenure (months)" min="1" required />
+              </div>
+              <div class="form-actions">
+                <button mat-stroked-button color="primary" type="submit" [disabled]="formSubmitted">Submit</button>
+                <button mat-button type="button" (click)="closeLoanForm()">Cancel</button>
+              </div>
+              <div *ngIf="formSubmitted" class="success-message">Loan application submitted!</div>
+            </form>
+          </div>
+        </mat-card>
+      </div>
+      <div *ngIf="!filteredLaptops().length" class="no-results">No laptops found.</div>
+    </div>
+  </ng-template>
+</ng-template>

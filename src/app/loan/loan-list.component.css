@@ -1,0 +1,16 @@
+.loan-table {
+  width: 100%;
+  margin: 0 auto;
+  background: #fff;
+}
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+.error-message {
+  color: #d32f2f;
+  text-align: center;
+  margin: 2rem 0;
+}

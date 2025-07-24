@@ -1,0 +1,26 @@
+<main class="auth-main">
+  <div class="container auth-container">
+    <div class="auth-card">
+      <h2 class="auth-title">Create Your Account</h2>
+      <form (ngSubmit)="signup()" class="auth-form">
+        <div class="form-group">
+          <label for="signup-email">Email</label>
+          <input type="email" id="signup-email" [(ngModel)]="email" name="email" required autocomplete="username" placeholder="Enter your email">
+        </div>
+        <div class="form-group">
+          <label for="signup-password">Password</label>
+          <input type="password" id="signup-password" [(ngModel)]="password" name="password" required autocomplete="new-password" placeholder="Create a password">
+        </div>
+        <div class="form-group">
+          <label for="signup-confirm">Confirm Password</label>
+          <input type="password" id="signup-confirm" [(ngModel)]="confirm" name="confirm" required autocomplete="new-password" placeholder="Confirm your password">
+        </div>
+        <button type="submit" class="btn btn-primary auth-btn">Sign Up</button>
+      </form>
+      <div class="auth-footer">
+        <span>Already have an account?</span> <a routerLink="/login" class="auth-link">Login</a>
+      </div>
+      <div *ngIf="error" class="auth-error">{{error}}</div>
+    </div>
+  </div>
+</main> 

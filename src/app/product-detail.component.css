@@ -1,0 +1,94 @@
+/* --- Product Detail Page Styles --- */
+.product-detail-section {
+  padding: 100px 0 40px 0;
+  background: var(--bg-primary);
+}
+.product-detail-container {
+  display: flex;
+  gap: 48px;
+  align-items: flex-start;
+  max-width: 1000px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+.product-image {
+  flex: 1 1 340px;
+  min-width: 280px;
+  max-width: 400px;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px var(--shadow-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  height: 320px;
+}
+.product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.product-info {
+  flex: 2 1 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+#product-title {
+  font-size: 2.1rem;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+.product-specs p {
+  color: var(--text-secondary);
+  font-size: 1.08rem;
+  margin-bottom: 2px;
+}
+.product-price {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--accent-color);
+  margin: 10px 0 0 0;
+}
+.price-label {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+.price-value {
+  color: var(--accent-color);
+  font-weight: 700;
+}
+#buy-finance-btn {
+  margin-top: 18px;
+  font-size: 1.1rem;
+  padding: 12px 0;
+  width: 220px;
+  align-self: flex-start;
+}
+#buy-finance-btn i {
+  margin-right: 8px;
+}
+.emi-section {
+  background: var(--bg-secondary);
+  padding: 60px 0 60px 0;
+}
+.emi-container {
+  max-width: 600px;
+  margin: 0 auto;
+  background: var(--bg-tertiary);
+  border-radius: 18px;
+  box-shadow: 0 4px 24px var(--shadow-color);
+  padding: 36px 28px 32px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.emi-container h2 {
+  color: var(--primary-color);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+} 

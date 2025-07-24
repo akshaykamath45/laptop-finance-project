@@ -1,0 +1,56 @@
+<section class="filter-bar">
+  <div class="container filter-bar-container">
+    <div class="filter-group">
+      <label for="brand-filter">Brand</label>
+      <select id="brand-filter" [(ngModel)]="brand" (change)="applyFilters()">
+        <option value="">All</option>
+        <option *ngFor="let b of brands" [value]="b">{{b}}</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label for="ram-filter">RAM</label>
+      <select id="ram-filter" [(ngModel)]="ram" (change)="applyFilters()">
+        <option value="">All</option>
+        <option *ngFor="let r of rams" [value]="r">{{r}}</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label for="processor-filter">Processor</label>
+      <select id="processor-filter" [(ngModel)]="processor" (change)="applyFilters()">
+        <option value="">All</option>
+        <option *ngFor="let p of processors" [value]="p">{{p}}</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label for="price-filter">Price</label>
+      <input type="range" id="price-filter" min="30000" max="200000" step="1000" [(ngModel)]="price" (input)="applyFilters()">
+      <span id="price-value">Up to ₹{{price | number}}</span>
+    </div>
+    <div class="filter-group search-group">
+      <input type="text" id="search-input" [(ngModel)]="search" (input)="applyFilters()" placeholder="Search by model or brand...">
+      <i class="fas fa-search"></i>
+    </div>
+  </div>
+</section>
+<section class="products-section">
+  <div class="container">
+    <div class="products-grid">
+      <div *ngIf="loading" class="no-results">Loading laptops...</div>
+      <div *ngIf="error" class="no-results">{{error}}</div>
+      <div *ngIf="!loading && !error && filtered.length === 0" class="no-results">No laptops found.</div>
+      <div *ngFor="let laptop of filtered" class="laptop-card visible" (click)="viewDetails(laptop)">
+        <div class="laptop-image">
+          <img [src]="laptop.imgurl" [alt]="laptop.brand + ' ' + laptop.model" loading="lazy">
+        </div>
+        <div class="laptop-info">
+          <h3>{{laptop.brand}} <span>{{laptop.model}}</span></h3>
+          <p><strong>Processor:</strong> {{laptop.processor}}</p>
+          <p><strong>RAM:</strong> {{laptop.ram}} &nbsp; <strong>Storage:</strong> {{laptop.storage}}</p>
+          <p *ngIf="laptop.gpu"><strong>GPU:</strong> {{laptop.gpu}}</p>
+          <div class="laptop-price">₹{{laptop.price | number}}</div>
+          <button class="view-details-btn" (click)="$event.stopPropagation(); viewDetails(laptop)"><i class="fas fa-arrow-right"></i> View Details</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section> 

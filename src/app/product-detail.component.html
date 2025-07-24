@@ -1,0 +1,54 @@
+<section class="product-detail-section" *ngIf="!loading && laptop">
+  <div class="container product-detail-container">
+    <div class="product-image">
+      <img [src]="laptop.imgurl" [alt]="laptop.brand + ' ' + laptop.model">
+    </div>
+    <div class="product-info">
+      <h1 id="product-title">{{laptop.brand}} {{laptop.model}}</h1>
+      <div class="product-specs">
+        <p><strong>Processor:</strong> {{laptop.processor}}</p>
+        <p><strong>RAM:</strong> {{laptop.ram}} &nbsp; <strong>Storage:</strong> {{laptop.storage}}</p>
+        <p *ngIf="laptop.gpu"><strong>GPU:</strong> {{laptop.gpu}}</p>
+      </div>
+      <div class="product-price"><span class="price-label">Price:</span> <span class="price-value">₹{{laptop.price | number}}</span></div>
+      <button id="buy-finance-btn" class="btn btn-primary" (click)="scrollToEMI()"><i class="fas fa-coins"></i> Buy with Finance</button>
+    </div>
+  </div>
+</section>
+<section class="emi-section" id="emi-section" *ngIf="!loading && laptop">
+  <div class="container emi-container">
+    <h2><i class="fas fa-calculator"></i> EMI Calculator</h2>
+    <form class="emi-form" (ngSubmit)="proceedApply()">
+      <div class="emi-form-group">
+        <label for="loan-amount">Loan Amount (₹)</label>
+        <input type="number" id="loan-amount" [(ngModel)]="loanAmount" name="loanAmount" min="1000" required (input)="updateEMI()">
+      </div>
+      <div class="emi-form-group">
+        <label for="down-payment">Down Payment (₹)</label>
+        <input type="number" id="down-payment" [(ngModel)]="downPayment" name="downPayment" min="0" (input)="updateEMI()">
+      </div>
+      <div class="emi-form-group">
+        <label for="tenure">Tenure (Months)</label>
+        <select id="tenure" [(ngModel)]="tenure" name="tenure" (change)="updateEMI()">
+          <option [value]="6">6</option>
+          <option [value]="12">12</option>
+          <option [value]="18">18</option>
+          <option [value]="24">24</option>
+        </select>
+      </div>
+      <div class="emi-form-group">
+        <label for="interest-rate">Interest Rate (%)</label>
+        <input type="number" id="interest-rate" [(ngModel)]="interestRate" name="interestRate" min="1" max="30" step="0.1" readonly>
+      </div>
+    </form>
+    <div class="emi-summary-card">
+      <div class="emi-summary-row"><i class="fas fa-calendar"></i> <span>EMI per month:</span> <strong>₹{{emi | number:'1.0-0'}}</strong></div>
+      <div class="emi-summary-row"><i class="fas fa-percent"></i> <span>Total Interest:</span> <strong>₹{{totalInterest | number:'1.0-0'}}</strong></div>
+      <div class="emi-summary-row"><i class="fas fa-wallet"></i> <span>Total Payable:</span> <strong>₹{{totalPayable | number:'1.0-0'}}</strong></div>
+    </div>
+    <button id="proceed-apply-btn" class="btn btn-primary" (click)="proceedApply()">Proceed to Apply</button>
+    <div *ngIf="applySuccess" class="success-message">Application submitted! (Backend integration here)</div>
+  </div>
+</section>
+<div *ngIf="loading" class="no-results">Loading laptop details...</div>
+<div *ngIf="error" class="no-results">{{error}}</div> 

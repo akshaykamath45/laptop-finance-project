@@ -1,0 +1,27 @@
+<main class="auth-main">
+  <div class="container auth-container">
+    <div class="auth-card">
+      <h2 class="auth-title">Sign In to Your Account</h2>
+      <form (ngSubmit)="login()" class="auth-form">
+        <div class="form-group">
+          <label for="login-email">Email</label>
+          <input type="email" id="login-email" [(ngModel)]="email" name="email" required autocomplete="username" placeholder="Enter your email">
+        </div>
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" [(ngModel)]="password" name="password" required autocomplete="current-password" placeholder="Enter your password">
+        </div>
+        <button type="submit" class="btn btn-primary auth-btn">Login</button>
+      </form>
+      <div class="auth-footer">
+        <span>Don't have an account?</span> <a routerLink="/signup" class="auth-link">Sign Up</a>
+      </div>
+      <div class="demo-credentials">
+        <h4>🧪 Demo Accounts</h4>
+        <p><strong>User:</strong> user&#64;demo.com | Password: user123</p>
+        <p><strong>Admin:</strong> admin&#64;demo.com | Password: admin123</p>
+      </div>
+      <div *ngIf="error" class="auth-error">{{error}}</div>
+    </div>
+  </div>
+</main> 
