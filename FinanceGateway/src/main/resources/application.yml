@@ -1,0 +1,62 @@
+server:
+  port: 9090
+
+spring:
+  main:
+    web-application-type: reactive
+  application:
+    name: FINANCE-GATEWAY
+  cloud:
+    gateway:
+      routes:
+        - id: CUSTOMER-SERVICE
+          uri: http://localhost:8084
+          predicates:
+            - Path=/customer-db/**,/employer-db/**,/location-db/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: CUSTOMER-SERVICE
+                fallbackUri: forward:/customerFallback
+
+        - id: LAPTOP-SERVICE
+          uri: http://localhost:8085
+          predicates:
+            - Path=/laptop-db/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: LAPTOP-SERVICE
+                fallbackUri: forward:/laptopFallback
+
+        - id: LOAN-SERVICE
+          uri: http://localhost:8086
+          predicates:
+            - Path=/loan-db/**,/emi-db/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: LOAN-SERVICE
+                fallbackUri: forward:/loanFallback
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        register-health-indicator: true
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 5s
+  timelimiter:
+    configs:
+      default:
+        timeout-duration: 5s
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    hostname: localhost
